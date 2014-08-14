@@ -1,29 +1,43 @@
-- Start Date: (fill me in with today's date, YYYY-MM-DD)
+- Start Date: 2014-08-14
 - RFC PR: (leave this empty)
 - Ember Issue: (leave this empty)
 
 # Summary
 
-One para explanation of the feature.
+For Ember Data. Pass through attribute meta data, includes `parentType`, `options`, `name`, and some other data
+to the transform associated with that attribute. This will allow provide the following function signiture updates to `DS.Transform`: 
+
+* `transform.serialize(deserialized, attributeMeta)`
+* `transform.deserialize(serialized, attributeMeta)`
 
 # Motivation
 
-Why are we doing this? What use cases does it support? What is the expected outcome?
+The main use case is to be able to configure the transform
+on a per-model basis making more DRY code. So the transform can be aware of type and options on `DS.attr` can
+be useful to configure the transform for DRY use.
 
 # Detailed design
 
-This is the bulk of the RFC. Explain the design in enough detail for somebody familiar
-with the framework to understand, and for somebody familiar with the implementation to implement.
-This should get into specifics and corner-cases, and include examples of how the feature is used.
+The change will most likely start in `eachTransformedAttribute` ([here](https://github.com/emberjs/data/blob/34f9fc2fcbda0f26a05f4d224cb8e5c6990172ea/packages/ember-data/lib/system/model/attributes.js#L193) which get the attributes for that instance via `get(this, 'attributes')`. In the `forEach` the `name` will be used to get the specific attribute, e.g.
+
+```js
+var attributeMeta = attributes.get(name);
+callback.call(binding, name, type, attributeMeta);
+```
+
+The next change will be in `applyTransforms`, where the `attributeMeta` parameter is added and passed to `transform.deserialize` as the second argument. See [here](https://github.com/emberjs/data/blob/master/packages/ember-data/lib/serializers/json_serializer.js#L117).
+
+You also have to handle the serialization part in `serializeAttribute` [here](https://github.com/emberjs/data/blob/master/packages/ember-data/lib/serializers/json_serializer.js#L528).
 
 # Drawbacks
 
-Why should we *not* do this?
+Extra API surface area, although not much. This could also potentially introduce tight coupling between models and transforms if used improperly, e.g. not returning a default value if using type checking.
 
 # Alternatives
 
-What other designs have been considered? What is the impact of not doing this?
+1. Passing the information from the server, which is a poor solution.
+2. Writing a new transform for each model/attribute that needs a variation. Although this might be a good solution sometimes if you extend a base transform.
 
 # Unresolved questions
 
-What parts of the design are still TBD?
+...
