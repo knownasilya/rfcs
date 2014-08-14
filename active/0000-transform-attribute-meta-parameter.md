@@ -18,6 +18,8 @@ be useful to configure the transform for DRY use.
 
 # Detailed design
 
+## Implementing
+
 The change will most likely start in [`eachTransformedAttribute`](https://github.com/emberjs/data/blob/34f9fc2fcbda0f26a05f4d224cb8e5c6990172ea/packages/ember-data/lib/system/model/attributes.js#L193), which gets the attributes for that instance via `get(this, 'attributes')`. In the `forEach` the `name` will be used to get the specific attribute, e.g.
 
 ```js
@@ -28,6 +30,10 @@ callback.call(binding, name, type, attributeMeta);
 The next change will be in `applyTransforms`, where the `attributeMeta` parameter is added and passed to `transform.deserialize` as the second argument. See [here](https://github.com/emberjs/data/blob/master/packages/ember-data/lib/serializers/json_serializer.js#L117).
 
 You also have to handle the serialization part in [`serializeAttribute`](https://github.com/emberjs/data/blob/master/packages/ember-data/lib/serializers/json_serializer.js#L528).
+
+## Using
+
+> TODO
 
 # Drawbacks
 
