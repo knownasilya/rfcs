@@ -29,7 +29,7 @@ callback.call(binding, name, type, attributeMeta);
 
 The next change will be in [`applyTransforms`][2], where the `attributeMeta` parameter is added and passed to `transform.deserialize` as the second argument.
 
-You also have to handle the serialization part in [`serializeAttribute`][3].
+You also have to handle the serialization part in [`serializeAttribute`][3], where you pass through the `attribute` parameter to `transform.serialize`.
 
 ## Using
 
