@@ -33,7 +33,44 @@ You also have to handle the serialization part in [`serializeAttribute`][3].
 
 ## Using
 
-> TODO
+A convoluted example:
+
+```js
+// Example based on https://github.com/chjj/marked library
+App.PostModel = DS.Model.extend({
+  title: DS.attr('string'),
+  markdown: DS.attr('markdown', {
+    markdown: {
+      gfm: false,
+      sanitize: true
+    }
+  })
+});
+
+App.TechnicalPostModel = DS.Model.extend({
+  title: DS.attr('string'),
+  gistUrl: DS.attr('string'),
+  markdown: DS.attr('markdown', {
+    markdown: {
+      gfm: true,
+      tables: true,
+      sanitize: false
+    }
+  })
+});
+
+App.MarkdownTransform = DS.Transform.extend({
+  serialize: function (deserialized, attributeMeta) {
+    return deserialized.raw;
+  },
+  
+  deserialize: function (serialized, attributeMeta) {
+    var options = attributeMeta.options.markdown || {};
+    
+    return marked(serialized, options);
+  }
+});
+```
 
 # Drawbacks
 
